@@ -1,0 +1,10 @@
+id,season,city,team1,team2,toss_winner,toss_decision,result,winner,venue,total_runs,half_century,extra_runs,overs_till_first_5wkts
+1,2018,Mumbai,Mumbai Indians,Chennai Super Kings,Chennai Super Kings,field,normal,Chennai Super Kings,Wankhede Stadium,165,0,4,
+2,2018,Mohali,Kings XI Punjab,Delhi Daredevils,Kings XI Punjab,field,normal,Kings XI Punjab,Punjab Cricket Association Stadium,166,1,6,
+3,2018,Kolkata,Kolkata Knight Riders,Royal Challengers Bangalore,Kolkata Knight Riders,field,normal,Kolkata Knight Riders,Eden Gardens,176,0,6,
+4,2018,Hyderabad,Sunrisers Hyderabad,Rajasthan Royals,Sunrisers Hyderabad,field,normal,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",125,0,8,13
+5,2018,Chennai,Chennai Super Kings,Kolkata Knight Riders,Chennai Super Kings,field,normal,Chennai Super Kings,MA Chidambaram Stadium,202,1,5,12
+7,2018,Hyderabad,Sunrisers Hyderabad,Mumbai Indians,Sunrisers Hyderabad,field,normal,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",147,0,8,
+8,2018,Bangalore,Royal Challengers Bangalore,Kings XI Punjab,Royal Challengers Bangalore,field,normal,Royal Challengers Bangalore,M. Chinnaswamy Stadium,155,0,6,
+9,2018,Mumbai,Mumbai Indians,Delhi Daredevils,Delhi Daredevils,field,normal,Delhi Daredevils,Wankhede Stadium,194,1,10,
+10,2018,Kolkata,Kolkata Knight Riders,Sunrisers Hyderabad,Sunrisers Hyderabad,field,normal,Sunrisers Hyderabad,Eden Gardens,138,0,7,
