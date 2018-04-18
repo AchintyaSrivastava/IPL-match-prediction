@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[22]:
+# In[180]:
 
 
 # Import numpy and pandas library
@@ -13,8 +13,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import KFold   #For K-fold cross validation
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.tree import DecisionTreeClassifier as DTC
 from sklearn import metrics
+from sklearn.linear_model import LinearRegression as lr
 
 # Input training and test data
 deliveries = pd.read_csv("Data/deliveries.csv")
@@ -24,7 +25,19 @@ IPL_2018 = pd.read_csv("Data/test_data.csv")
 matches = match[["city","venue","season","toss_winner","toss_decision", "result", "dl_applied", "team1", "team2", "winner"]]
 
 
-# In[23]:
+# In[181]:
+
+
+
+#Removing data of withdrawn teams
+withdrawn_teams = ['Deccan Chargers', 'Gujarat Lions', 'Kochi Tuskers Kerala', 'Pune Warriors', 'Rising Pune Supergiant', 'Rising Pune Supergiants']
+for team in withdrawn_teams:
+    matches = matches[matches["team1"] != team]
+    matches = matches[matches["team2"] != team]
+matches = matches.reset_index(drop=True)
+
+
+# In[182]:
 
 
 # Addition of customized field
@@ -41,14 +54,14 @@ newdf = extra_stats.groupby("match_id").sum().drop("batsman_runs",1).reset_index
 matches = pd.concat([matches, newdf], axis=1)
 
 
-# In[24]:
+# In[183]:
 
 
 # Choice of fields for test data
 IPL_2018 = IPL_2018[["city","venue","season","toss_winner","toss_decision", "result", "dl_applied", "team1", "team2", "winner", "total_runs", "half_century", "extra_runs"]]
 
 
-# In[25]:
+# In[184]:
 
 
 # Removing matches resulting in tie, having no results or being finalized via D/L method
@@ -60,7 +73,7 @@ IPL_2018 = IPL_2018[matches["result"] != "no result"]
 IPL_2018 = IPL_2018[matches["dl_applied"] == 0]
 
 
-# In[26]:
+# In[185]:
 
 
 # Merging training and test data for preprocessing
@@ -69,7 +82,7 @@ matches = pd.concat([IPL_2018, matches]).reset_index(drop=True)
 matches.drop(["dl_applied", "result"],1,inplace=True)
 
 
-# In[27]:
+# In[186]:
 
 
 def factorize_fields(matches):
@@ -86,7 +99,7 @@ def factorize_fields(matches):
 #[["city","venue","season","toss_winner","toss_decision"]]
 
 
-# In[28]:
+# In[187]:
 
 
 # Converting data into factors
@@ -96,14 +109,14 @@ def factorize_fields(matches):
 matches.drop(["season"],1,inplace=True)
 
 
-# In[29]:
+# In[188]:
 
 
 # Deriving insight on data
 matches.describe()
 
 
-# In[30]:
+# In[189]:
 
 
 # Train - test split after pre processing
@@ -112,7 +125,7 @@ test_data = matches[:ind]
 train_data = matches[ind:]
 
 
-# In[31]:
+# In[190]:
 
 
 def remap(item):
@@ -120,7 +133,7 @@ def remap(item):
     return factors[item]
 
 
-# In[32]:
+# In[191]:
 
 
 def model_building(model, predictors, outcome, data, test_data):
@@ -138,7 +151,7 @@ def model_building(model, predictors, outcome, data, test_data):
     model.fit(data[predictors],data[outcome])
     #coefficients = [model.intercept_, model.coef_]
     #print coefficients
-    predictions = model.predict(test_data[predictors])
+    predictions = np.int_(np.round_(model.predict(test_data[predictors])))
     test_data["predicted_winner"] = predictions
     accuracy = metrics.accuracy_score(predictions,test_data[outcome])
     #print('Accuracy : %s' % '{0:.3%}'.format(accuracy))
@@ -150,16 +163,18 @@ def model_building(model, predictors, outcome, data, test_data):
     return [df, accuracy, cv_error]
 
 
-# In[33]:
+# In[192]:
 
 
 # Models tested
-model1 = RandomForestClassifier(n_estimators=100)
+model1 = lr()                         #linear regression
 model2 = LogisticRegression()         #L2 regularization, one vs all
 model3 = LogisticRegression(penalty='l1')         #L1 regularization, one vs all
 model4 = LogisticRegression(solver='newton-cg', multi_class='multinomial')  #Multinomial
 model5 = SVC(kernel = "linear")
-models = [model1, model2, model3, model4, model5]
+model6 = DTC()
+model7 = RandomForestClassifier(n_estimators=100)
+models = [model1, model2, model3, model4, model5, model6, model7]
 results = []
 accuracies = []
 cv_errors = []
@@ -173,21 +188,21 @@ for model in models:
     accuracies.append(accuracy)
     cv_errors.append(cv_error)
     #coefficients_summary = coefficients_summary.append(coefficients, ignore_index=True)
-model_names = ["Random Forest", "LogisticRegression(One vs All) L2 reg", "LogisticRegression(One vs All) L1 reg", "MultinomialRegression", "SVM"]
+model_names = ["Linear Regression(Nearest integer round off)", "LogisticRegression(One vs All) L2 reg", "LogisticRegression(One vs All) L1 reg", "MultinomialRegression", "SVM", "DecisionTree", "Random Forest"]
 model_comparison = pd.DataFrame(columns=["Model Names", "Accuracy", "Cross Validation Errors"])
 model_comparison["Model Names"] = model_names
 model_comparison["Accuracy"] = accuracies
 model_comparison["Cross Validation Errors"] = cv_errors
 
 
-# In[34]:
+# In[193]:
 
 
 # Final result
 model_comparison
 
 
-# In[35]:
+# In[194]:
 
 
 # Post model fit analysis
@@ -196,8 +211,14 @@ model = sm.MNLogit(train_data[output], train_data[predictors])
 mod = model.fit()
 
 
-# In[36]:
+# In[195]:
 
 
 print mod.summary()
+
+
+# In[196]:
+
+
+results[5]
 
